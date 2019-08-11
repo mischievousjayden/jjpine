@@ -1,0 +1,26 @@
+ARG GITCOMMIT=master
+
+FROM alpine:3.10 as build
+
+ARG GITCOMMIT
+
+RUN apk --update add git
+
+RUN git clone https://github.com/mischievousjayden/jjpine.git && \
+    cd jjpine && \
+    git checkout ${GITCOMMIT}
+
+
+FROM python:3
+
+ARG GITCOMMIT
+
+COPY --from=build /jjpine/ops/docker/pip-requirements.txt /tmp/pip-requirements.txt
+
+RUN pip install -r /tmp/pip-requirements.txt && \
+    rm -rf /root/.cache/pip/*
+
+COPY --from=build /jjpine /project/jjpine
+
+ENV PYTHONPATH $PYTHONPATH:/project/jjpine/src/py
+ENV GITCOMMIT ${GITCOMMIT}

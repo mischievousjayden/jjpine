@@ -49,6 +49,8 @@ start_date=`utc_to_unix $human_start_date`
 end_date=`utc_to_unix $human_end_date`
 crumb=`get_crumb $ticker $cookie_jar`
 
-request_url="https://query1.finance.yahoo.com/v7/finance/download/$ticker?period1=$start_date&period2=$end_date&interval=$freq&events=history&crumb=$crumb"
+base_url="https://query1.finance.yahoo.com/v7/finance/download/"
+query="$ticker?period1=$start_date&period2=$end_date&interval=$freq&events=history&crumb=$crumb"
+request_url="$base_url""$query"
 # echo "download $ticker data between" `unix_to_utc $start_date` `unix_to_utc $end_date` "from $request_url"
 curl -s --cookie $cookie_jar $request_url
